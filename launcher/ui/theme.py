@@ -50,6 +50,28 @@ def palette(dark: bool) -> Palette:
     return DARK if dark else LIGHT
 
 
+# 报错 / 崩溃分析窗口：强制白底黑字，保证任何主题下都可读
+REPORT_QSS = """
+QWidget { background: #ffffff; color: #111111; font-size: 13px; }
+QLabel { background: transparent; color: #111111; }
+QPlainTextEdit, QTextEdit {
+    background: #ffffff; color: #111111; border: 1px solid #d0d0d0; border-radius: 6px;
+}
+QTextBrowser {
+    background: #fffbea; color: #5a4a00; border: 1px solid #e6d27a;
+    border-radius: 8px; padding: 8px;
+}
+QPushButton {
+    background: #f4f4f4; color: #111111; border: 1px solid #cccccc;
+    border-radius: 7px; padding: 6px 14px;
+}
+QPushButton:hover { background: #e8e8e8; }
+QPushButton#danger { color: #c0392b; border-color: #c0392b; background: #ffffff; }
+QPushButton#danger:hover { background: #c0392b; color: #ffffff; }
+QFrame { background: #ffffff; }
+"""
+
+
 def qss(p: Palette) -> str:
     return f"""
 /* ---------- 基础 ---------- */

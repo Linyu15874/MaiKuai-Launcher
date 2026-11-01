@@ -177,6 +177,7 @@ class MainWindow(QMainWindow):
         self.ctx.theme_changed.connect(self.on_theme_changed)
         self.game_exited.connect(self.on_game_exit)
         self.apply_theme_visuals()
+        app.aboutToQuit.connect(self._on_app_quit)
         QTimer.singleShot(0, self.on_startup)
 
     # ------------------------------------------------------------------ 主题
@@ -416,3 +417,16 @@ class MainWindow(QMainWindow):
             pass
         self.ctx.config.set("ui.window_geometry", bytes(self.saveGeometry().toHex()).decode())
         super().closeEvent(event)
+
+    def _on_app_quit(self):
+        """应用退出前清理：结束游戏子进程、清空后台线程池，确保进程彻底退出。"""
+        try:
+            self.game_launcher.stop()
+        except Exception:
+            pass
+        try:
+            from PySide6.QtCore import QThreadPool
+
+            QThreadPool.globalInstance().clear()
+        except Exception:
+            pass

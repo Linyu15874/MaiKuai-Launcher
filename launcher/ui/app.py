@@ -129,6 +129,8 @@ class LauncherApp(QApplication):
         font.setHintingPreference(QFont.HintingPreference.PreferDefaultHinting)
         self.setFont(font)
         self.setAttribute(Qt.AA_DontShowIconsInMenus, False)
+        # 关闭最后一个窗口即退出，避免进程残留导致临时目录被占用、二次启动失败
+        self.setQuitOnLastWindowClosed(True)
         # 应用图标
         for name in ("app.ico", "app.png"):
             p = core_paths.RESOURCE_DIR / name

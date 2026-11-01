@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import sys
+import traceback
 from pathlib import Path
 
 # 让脚本 / 冻结后的程序都能找到 launcher 包
@@ -17,20 +18,24 @@ if str(HERE) not in sys.path:
 
 
 def main() -> int:
-    from launcher.ui.app import bootstrap
-
-    app, ctx = bootstrap()  # noqa
     try:
+        from launcher.ui.app import bootstrap
+
+        app, ctx = bootstrap()  # noqa
         from launcher.ui.window import MainWindow  # noqa
 
         win = MainWindow(ctx, app)
         win.show()
         return app.exec()  # noqa
     except Exception as e:
-        import traceback
+        tb = "".join(traceback.format_exception(type(e), e, e.__traceback__))
+        try:
+            from launcher.ui.widgets import fatal
 
-        traceback.print_exc()
-        print(f"启动失败：{e}")
+            fatal("启动失败", tb)
+        except Exception:
+            # 最终兜底：至少打印到控制台
+            sys.stderr.write(tb)
         return 1
 
 

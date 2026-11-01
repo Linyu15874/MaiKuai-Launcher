@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QDialogButtonBo
                                QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from . import icons
-from .theme import Palette
+from .theme import Palette, REPORT_QSS
 
 
 # --------------------------------------------------------------------------- 卡片
@@ -172,13 +172,22 @@ class _Task(QRunnable):
 
     def run(self):  # 子线程
         def report(text: str, cur: int = 0, total: int = 0, detail: str = ""):
-            self.signals.progress.emit(text, int(cur), int(total), str(detail))
+            try:
+                self.signals.progress.emit(text, int(cur), int(total), str(detail))
+            except RuntimeError:
+                pass
 
         try:
             result = self.fn(report)
-            self.signals.finished.emit(result)
+            try:
+                self.signals.finished.emit(result)
+            except RuntimeError:
+                pass
         except Exception as e:
-            self.signals.error.emit(f"{e}\n{traceback.format_exc(limit=3)}")
+            try:
+                self.signals.error.emit(f"{e}\n{traceback.format_exc(limit=3)}")
+            except RuntimeError:
+                pass
 
 
 def run_async(parent: QObject, fn: Callable, on_result=None, on_error=None, on_progress=None):
@@ -208,11 +217,32 @@ def msg(parent, title: str, text: str, kind: str = "info", buttons=QMessageBox.S
     box.setIconPixmap(icons.icon(icon_name, pal.accent if kind != "warn" else pal.warning, 32).pixmap(32, 32))
     box.setStandardButtons(buttons)
     box.setStyleSheet("QLabel{ min-width: 340px; }")
+    if kind in ("error", "warn"):
+        # 报错窗口：白底黑字，保证可读
+        box.setStyleSheet(REPORT_QSS + "QLabel{ min-width: 340px; }")
     return box.exec()
 
 
 def ask(parent, title: str, text: str) -> bool:
     return msg(parent, title, text, "info", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes
+
+
+def fatal(title: str, text: str, parent=None) -> None:
+    """启动期致命错误：强制白底黑字弹窗，避免静默失败。"""
+    from PySide6.QtWidgets import QApplication, QMessageBox
+
+    own = QApplication.instance() is None
+    app = QApplication(sys.argv) if own else QApplication.instance()
+    box = QMessageBox(parent)
+    box.setIcon(QMessageBox.Icon.Critical)
+    box.setWindowTitle(title or "启动失败")
+    box.setText("程序启动时发生错误，已无法继续：")
+    box.setDetailedText(text)
+    box.setStandardButtons(QMessageBox.StandardButton.Ok)
+    box.setStyleSheet(REPORT_QSS)
+    box.exec()
+    if own:
+        app.quit()
 
 
 def choose_file(parent, caption: str, start: str = "", filter: str = "") -> str:

@@ -17,6 +17,7 @@ from launcher.core.auth import (Account, DEFAULT_CLIENT_ID, KNOWN_YGGDRASIL, Acc
                     login_offline, login_yggdrasil)
 from launcher.core import java as java_mod
 from launcher.core.launch import analyze_log
+from launcher.ui.theme import REPORT_QSS
 from launcher.ui.widgets import Card, choose_dir, msg, run_async
 
 
@@ -324,6 +325,8 @@ class ConsoleWindow(QWidget):
         self.ctx = ctx
         self.setWindowTitle(f"游戏日志 - {version_id or 'Minecraft'}")
         self.resize(900, 560)
+        # 报错 / 日志窗口强制白底黑字，保证在任意主题下可读
+        self.setStyleSheet(REPORT_QSS)
         pal = ctx.palette()
         layout = QVBoxLayout(self)
         layout.setContentsMargins(14, 12, 14, 12)
