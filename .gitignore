@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 构建产物
+build/
+dist/
+*.spec.bak
+
+# 运行/缓存数据
+data/
+portable.txt
+logs/
+*.log
+cache/
+
+# UI 截图（仅本地验证用）
+shots/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
