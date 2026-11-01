@@ -46,7 +46,7 @@ class LaunchSettings:
     natives_dir: Path | None = None
     extra_features: set[str] = field(default_factory=set)
     launcher_name: str = "PCL-Launcher"
-    launcher_version: str = "1.0.0"
+    launcher_version: str = paths.APP_VERSION
 
 
 # --------------------------------------------------------------------------- 工具

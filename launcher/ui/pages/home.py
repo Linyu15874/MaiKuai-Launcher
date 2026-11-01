@@ -84,8 +84,8 @@ class InstanceSelector(QWidget):
             return
         self.label.setStyleSheet("")
         self.label.setText(f"{ins.name}")
-        if self.receivers(self.instance_changed) or True:
-            self.instance_changed.emit(ins)
+        # 向（可能为空）的接收者广播当前实例变更；无接收者时 emit 是安全的
+        self.instance_changed.emit(ins)
 
 
 class HomePage(QWidget):

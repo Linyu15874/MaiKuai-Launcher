@@ -13,12 +13,12 @@ import platform
 import sys
 from pathlib import Path
 
+from .. import __codename__ as APP_CODENAME, __version__ as APP_VERSION
+
 APP_ID = "pcl-launcher"
 APP_NAME = "麦块启动器"
-APP_VERSION = "1.0.0"
-APP_CODENAME = "Neo Edition"
 # 注意：HTTP 头必须为纯 ASCII
-USER_AGENT = "PCL-Launcher/1.0.0 (Minecraft launcher, inspired by PCL2 & HMCL)"
+USER_AGENT = f"PCL-Launcher/{APP_VERSION} (Minecraft launcher, inspired by PCL2 & HMCL)"
 
 IS_WINDOWS = platform.system() == "Windows"
 IS_MAC = platform.system() == "Darwin"

@@ -18,6 +18,7 @@ from launcher.core.auth import login_offline
 from launcher.core.installer import GameInstaller
 from launcher.core.launch import LaunchSettings, Launcher, build_command
 from launcher.core.version import VersionProfile
+from launcher.core import paths
 from .dialogs import ConsoleWindow, FirstRunDialog, LoginDialog
 from .pages.download import DownloadPage
 from .pages.home import HomePage
@@ -142,7 +143,7 @@ class MainWindow(QMainWindow):
             side_layout.addWidget(b)
             self.nav_buttons[key] = b
         side_layout.addStretch(1)
-        self.version_tip = QLabel(f"v{ctx.config.get('ui.version', '1.0.0')}")
+        self.version_tip = QLabel(f"v{paths.APP_VERSION}")
         self.version_tip.setStyleSheet("color: %s; font-size: 11px;" % ctx.palette().text_dim)
         side_layout.addWidget(self.version_tip)
         body.addWidget(self.sidebar)
@@ -356,7 +357,7 @@ class MainWindow(QMainWindow):
             server_address=ins.server or self.ctx.config.get("server.address", ""),
             natives_dir=natives,
             launcher_name="PCL-Py",
-            launcher_version="1.0.0",
+            launcher_version=paths.APP_VERSION,
         )
         try:
             cmd, cwd, env = build_command(settings)
